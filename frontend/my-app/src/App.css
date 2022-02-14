@@ -1,0 +1,32 @@
+body {
+  padding: 0 2rem;
+}
+
+.OperationRow {
+  padding: 2rem 0;
+  display: flex;
+}
+
+.OperationRow__avatar {
+  border-radius: 50%;
+  height: 3rem;
+  width: 3rem;
+}
+
+.OperationRow__textblock {
+  padding-left: 1rem;
+  width: auto;
+  flex: auto;
+}
+
+.OperationRow__header {
+  font-weight: 700;
+  font-size: 1.3rem; 
+}
+
+.OperationRow__header,
+.OperationRow__category {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0.2rem;
+}
