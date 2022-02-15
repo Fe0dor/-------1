@@ -2,8 +2,14 @@ body {
   padding: 0 2rem;
 }
 
+.DateRow {
+  font-weight: 600;
+  font-size: 1.4rem;
+  margin-bottom: 2rem;
+}
+
 .OperationRow {
-  padding: 2rem 0;
+  margin-bottom: 2rem;
   display: flex;
 }
 
@@ -21,12 +27,12 @@ body {
 
 .OperationRow__header {
   font-weight: 700;
-  font-size: 1.3rem; 
+  font-size: 1.2rem; 
 }
 
 .OperationRow__header,
 .OperationRow__category {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 0.2rem;
+  padding-bottom: 0.3rem;
 }

@@ -3,12 +3,12 @@ import './App.css';
 const json = {
   categories: {
     0: {name: 'Не учитывать', color: 'rgb(256, 256, 256, 0.5)'},
-    1: {name: 'Развлечения', color: '#f9bf3b'}, //1
-    2: {name: 'Дом', color: '#a37c82'}, //1
-    3: {name: 'Здоровье', color: '#16a085'}, //1
+    1: {name: 'Развлечения', color: '#f9bf3b'},
+    2: {name: 'Дом', color: '#a37c82'},
+    3: {name: 'Здоровье', color: '#16a085'},
     4: {name: 'Образование', color: '#1e517b'},
-    5: {name: 'Одежда', color: '#fe7968'}, //1
-    6: {name: 'Продукты', color: '#eb9532'}, //1
+    5: {name: 'Одежда', color: '#fe7968'},
+    6: {name: 'Продукты', color: '#eb9532'},
     7: {name: 'Обязательные', color: '#22313f'},
     8: {name: 'Перевод', color: '#524eb7'}
   },
@@ -19,11 +19,21 @@ const json = {
     {id: 4, time: '2021-02-05T13:51:50.417Z', name: 'Пополнение', costMapCategory: [[8, 2000]]},
     {id: 5, time: '2022-01-01T13:51:50.417Z', name: 'Дикси', costMapCategory: [[6, -1247]]},
     {id: 6, time: '2022-01-15T13:51:50.417Z', name: 'Улыбка Радуги', costMapCategory: [[2, -330]]},
-    {id: 7, time: '2022-02-18T13:51:50.417Z', name: 'Хеликс', costMapCategory: [[3, -330]]},
+    {id: 7, time: '2022-02-23T14:51:50.417Z', name: 'Хеликс', costMapCategory: [[3, -330]]},
     {id: 8, time: '2022-02-23T13:51:50.417Z', name: 'Общежитие', costMapCategory: [[4, -751]]},
     {id: 9, time: '2022-02-12T13:51:50.417Z', name: 'Nike', costMapCategory: [[5, -27]]},
-  ],
+  ].sort(f),
 }
+function f(a, b) {
+  if (new Date(a.time) < new Date(b.time)) {
+    return 1;
+  } else if (new Date(a.time) === new Date(b.time)) {
+    return 0;
+  } else {
+    return -1;
+  }
+}
+
 
 function App() {
   return (
@@ -35,9 +45,17 @@ function App() {
 
 function OperationList(props) {
   const operations = props.operations;
-  const listItems = operations.map((operation, i) =>
-    <OperationRow key={i.toString()} operation={operation} categories={props.categories} />
-  );
+  let listItems = [];
+  let previosDate;
+  operations.forEach((operation, i) => {
+    const time = new Date(operation.time);
+    if (previosDate !== time.toDateString()) {
+      listItems.push(<DateRow key={i.toString()+'d'} time={time} />);
+      previosDate = time.toDateString();
+    }
+    listItems.push(<OperationRow key={i.toString()} operation={operation} categories={props.categories} />);
+  });
+
   return (
     <div>
       {listItems}
@@ -46,7 +64,13 @@ function OperationList(props) {
 }
 
 function DateRow(props) {
-
+  var options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timezone: 'UTC',
+  };
+  return <div className='DateRow'>{props.time.toLocaleString("ru", options)}</div>
 }
 
 function OperationRow(props) {
