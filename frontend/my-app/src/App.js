@@ -1,4 +1,5 @@
 import './App.css';
+import React, { useState } from 'react';
 
 const json = {
   categories: {
@@ -35,13 +36,28 @@ function f(a, b) {
 }
 
 
+
 function App() {
+  const [isModal, toggleModal] = useState(null);
+
+  function closeFunction() {
+    toggleModal(null);
+    document.querySelector('body').style.overflow = '';
+  }
+
+  function openFunction(children) {
+    toggleModal(<ModalWindow closeFunction={closeFunction}>{children}</ModalWindow>);
+    document.querySelector('body').style.overflow = 'hidden';
+  }
+
   return (
     <div>
-      <OperationList operations={json.expense} categories={json.categories} />
+      <OperationList operations={json.expense} categories={json.categories} openModal={openFunction}/>
+      {isModal}
     </div>
   );
 }
+
 
 function OperationList(props) {
   const operations = props.operations;
@@ -53,15 +69,43 @@ function OperationList(props) {
       listItems.push(<DateRow key={i.toString()+'d'} time={time} />);
       previosDate = time.toDateString();
     }
-    listItems.push(<OperationRow key={i.toString()} operation={operation} categories={props.categories} />);
+    listItems.push(<OperationRow key={i.toString()} operation={operation} categories={props.categories} openModal={props.openModal}/>);
   });
 
   return (
     <div>
+      <OperationBar openModal={props.openModal}/>
       {listItems}
     </div>
   );
 }
+
+
+function ModalWindow(props) {
+  return (
+    <div className='ModalWindow'>
+      <div className='ModalWindow__backdrop' onClick={props.closeFunction}></div>
+      <div className='ModalWindow__content'>
+        <div className='ModalWindow__header'><div onClick={props.closeFunction}>X</div></div>
+        <div className='ModalWindow__body'>{props.children}</div>
+      </div>
+    </div>
+  );
+}
+
+
+function OperationBar(props) {
+  const el = <h1>111</h1>;
+  function opM() {
+    props.openModal(el);
+  }
+  return (
+    <div className='OperationBar'>
+      <div className='OperationBar__add' onClick={opM}>+</div>
+    </div>
+  );
+}
+
 
 function DateRow(props) {
   var options = {
@@ -70,8 +114,9 @@ function DateRow(props) {
     day: 'numeric',
     timezone: 'UTC',
   };
-  return <div className='DateRow'>{props.time.toLocaleString("ru", options)}</div>
+  return <div className='DateRow'>{props.time.toLocaleString("ru", options)}</div>;
 }
+
 
 function OperationRow(props) {
   const categories = props.categories;
@@ -85,20 +130,23 @@ function OperationRow(props) {
     colors = [categories[operation.costMapCategory[0][0]].color];
   } else {
     list = operation.costMapCategory.map((i) =>
-      <div className='OperationRow__category' key={i}><div>{categories[i[0]].name}</div><div>{i[1]}</div></div>
+      <div className='OperationRow__category' key={i}><div>{categories[i[0]].name}</div><div>{i[1]} ₽</div></div>
     );
     colors = operation.costMapCategory.map((i) => categories[i[0]].color);
     for (let i of operation.costMapCategory) {
       if (i[0] !== 0) cost += i[1];
     }
   }
+  function opM() {
+    props.openModal(<div>{list}</div>);
+  }
   return (
-    <div className='OperationRow'>
+    <div className='OperationRow' onClick={opM}>
       <div className='OperationRow__avatar' style={colors.length === 1 ? {backgroundColor: colors[0]} : {background: `linear-gradient(70deg, ${colors.join()})`}}></div>
       <div className='OperationRow__textblock'>
         <div className='OperationRow__header'>
           <div>{operation.name}</div>
-          <div style={cost > 0 ? {color: '#16a085'} : {}}>{cost}</div>
+          <div className='OperationRow__cost' style={cost > 0 ? {color: '#16a085'} : {}}>{cost} ₽</div>
         </div>
         {list}
       </div>
